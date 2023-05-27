@@ -1,0 +1,3 @@
+[editor]
+soft-wrap.enable = false
+lsp.display-inlay-hints = false
