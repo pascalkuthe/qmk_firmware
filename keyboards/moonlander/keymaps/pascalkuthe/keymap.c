@@ -6,19 +6,19 @@
 #include "send_string_keycodes.h"
 #include QMK_KEYBOARD_H
 #include "version.h"
-#include "features/achordion.h"
+// #include "features/achordion.h"
 
-// Home row mods for Magic Sturdy layer.
-#define HOME_A KC_A
+// Home row mods
+#define HOME_A LT(L_SYMB, KC_A)
 #define HOME_R LALT_T(KC_R)
 #define HOME_S LCTL_T(KC_S)
-#define HOME_T LSFT_T(KC_T)
-#define HOME_O KC_O
+#define HOME_T KC_T
+#define HOME_O LT(L_SYMB, KC_O)
 #define HOME_I LALT_T(KC_I)
 #define HOME_E LCTL_T(KC_E)
-#define HOME_Z LT(L_SYS, KC_Z)
-#define HOME_N LSFT_T(KC_N)
-#define HOME_SC LT(L_SYS, KC_SLASH)
+#define HOME_Z LGUI_T(KC_Z)
+#define HOME_N KC_N
+#define HOME_SC LGUI_T(KC_UNDERSCORE)
 #define HOME_SP LT(L_SYMB, KC_SPACE)
 #define HOME_BSP LT(L_NAV, KC_BACKSPACE)
 
@@ -27,12 +27,27 @@ enum custom_keycodes {
     OE,
     UE,
     SS,
+    UPDIR,
+    SCOPE,
+};
+
+
+
+const key_override_t dot_key_override =
+    ko_make_basic(MOD_MASK_SHIFT, KC_DOT, KC_EXCLAIM);  // Shift . is ?
+const key_override_t comm_key_override =
+    ko_make_basic(MOD_MASK_SHIFT, KC_COMM, KC_QUES); // Shift , is !
+
+const key_override_t** key_overrides = (const key_override_t*[]){
+    &dot_key_override,
+    &comm_key_override,
+    NULL
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-    if (!process_achordion(keycode, record)) {
-        return false;
-    }
+    // if (!process_achordion(keycode, record)) {
+    //     return false;
+    // }
     switch (keycode) {
         case AE:
             if (record->event.pressed) {
@@ -66,6 +81,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 // when keycode QMKURL is released
             }
             break;
+        case UPDIR:
+            if (record->event.pressed) {
+                // when keycode QMKURL is pressed
+                SEND_STRING("../");
+            } else {
+                // when keycode QMKURL is released
+            }
+            break;
+        case SCOPE:
+            if (record->event.pressed) {
+                // when keycode QMKURL is pressed
+                SEND_STRING("::");
+            } else {
+                // when keycode QMKURL is released
+            }
+            break;
     }
 
     return true;
@@ -85,38 +116,38 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [L_BASE] = LAYOUT_moonlander(
     // _________________________________________________________________________________________________________________________________________________________________________________
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-         KC_DELETE,       KC_1,          KC_2,        KC_3,    KC_4,       KC_5,       KC_HOME,       KC_END,      KC_6,     KC_7,     KC_8,       KC_9,         KC_0,       KC_RIGHT_ALT,
+         KC_DELETE,       KC_8,          KC_9,        KC_0,    KC_5,       KC_6,       KC_HOME,       KC_END,      KC_7,     KC_1,     KC_2,       KC_3,         KC_4,       KC_RIGHT_ALT,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-         KC_DELETE,        KC_Q,          KC_W,        KC_F,    KC_P,      KC_B,       KC_AMPR,      KC_PIPE,      KC_J,     KC_L,     KC_U,       KC_Y,         KC_QUOT,      KC_RIGHT_ALT,
+         KC_DELETE,        KC_Q,          KC_W,        KC_F,    KC_P,      KC_B,       KC_AMPR,      KC_PIPE,      KC_J,     KC_L,     KC_U,       KC_Y,         KC_QUOT,   KC_BACKSLASH,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-           CW_TOGG,       HOME_A,        HOME_R,      HOME_S,  HOME_T,      KC_G,      KC_LBRC,      KC_RBRC,       KC_M,    HOME_N,   HOME_E,      HOME_I,      HOME_O,  OSL(L_UNICODE),
+        OSM(MOD_LSFT),    HOME_A,        HOME_R,      HOME_S,  HOME_T,      KC_G,      KC_LBRC,      KC_RBRC,       KC_M,    HOME_N,   HOME_E,      HOME_I,      HOME_O,   OSM(MOD_LSFT),
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |                           |         |        |          |             |             |             |
-         CW_TOGG,        HOME_Z,        KC_X,        KC_C,    KC_D,       KC_V,                                   KC_K,     KC_H,   KC_COMMA,    KC_DOT,       HOME_SC,    OSM(MOD_RSFT),
+         KC_COMMA,        HOME_Z,        KC_X,        KC_C,    KC_D,       KC_V,                                   KC_K,     KC_H,    KC_LPRN,    KC_RPRN,      HOME_SC,    KC_DOT,
     //|______________|______________|______________|________|________|______________|                           |_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |                           |         |        |          |             |             |             |
        KC_LEFT_GUI,    KC_LEFT_GUI,   KC_LEFT_GUI,  KC_LBRC,LT(L_SYMB,KC_TAB),G(KC_LEFT),                   G(KC_RIGHT), KC_ENTER,   KC_RCBR,  KC_SLASH,     KC_SLASH,    KC_SLASH,
     //|______________|______________|______________|________|________|______________|_________       ___________|_________|________|__________|_____________|_____________|_____________|
     //                                |                  |                |                   |     |           |                  |                |
-                                           HOME_SP,          KC_ESC,          KC_LEFT_ALT,           TG(L_NUM),    KC_DELETE,          HOME_BSP
+                                           HOME_SP,          KC_ESC,          KC_LEFT_ALT,           TG(L_UNICODE),  KC_ESCAPE,      HOME_BSP
     //                                |__________________|________________|___________________|     |___________|__________________|________________|
   ),
 
   [L_NAV] = LAYOUT_moonlander(
     // _________________________________________________________________________________________________________________________________________________________________________________
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-          _______,       _______,        _______,   _______, _______,    _______,      _______,      _______,     _______, _______,  _______,     _______,     _______,      _______,
+          _______,       _______,        _______,   _______, _______,    _______,      _______,     _______,     _______, _______,  _______,     _______,     _______,      _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-          _______,        KC_MINUS,      KC_7,       KC_8,    KC_9,    KC_HASH,        _______,      _______,      _______, KC_PAGE_UP,KC_PGDN, KC_MS_WH_UP, KC_MS_WH_DOWN,  _______,
+          _______,        _______,       _______,   _______, _______,    _______,      _______,     _______,      _______, KC_PAGE_UP,KC_PGDN, KC_MS_WH_UP, KC_MS_WH_DOWN,  _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
-    //|              |              |              |        |        |               |           | |             |         |        |          |             |             |             |
-          _______,        KC_EQL,        KC_4,       KC_5,    KC_6,     KC_0,         _______,       _______,     KC_ENTER,  KC_LEFT,  KC_DOWN,    KC_UP,       KC_RIGHT,     _______,
+    //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
+          _______,        _______,       _______,   _______, _______,    _______,       _______,    _______,     KC_ENTER,  KC_LEFT,  KC_DOWN,    KC_UP,       KC_RIGHT,     _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |                           |         |        |          |             |             |             |
-          _______,        KC_PLUS,       KC_1,       KC_2,    KC_3,    KC_BACKSLASH,                              KC_MS_BTN1,KC_MS_LEFT,KC_MS_DOWN,  KC_MS_UP,   KC_MS_RIGHT,   _______,
+          _______,        _______,       _______,   _______, _______,    _______,                              KC_MS_BTN1,KC_MS_LEFT,KC_MS_DOWN,  KC_MS_UP,   KC_MS_RIGHT,   _______,
     //|______________|______________|______________|________|________|______________|                           |_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |                           |         |        |          |             |             |             |
           _______,       _______,        _______,   _______, _______,    _______,                                 _______, KC_MS_BTN2,  _______,    _______,      _______,      _______,
@@ -128,16 +159,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [L_SYMB] = LAYOUT_moonlander(
     // _________________________________________________________________________________________________________________________________________________________________________________
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-          _______,       _______,      _______,     _______,  _______,   _______,      _______,     _______,     _______,   _______,  _______,   _______,      _______,       _______,
+         _______,        KC_F8,          KC_F9,      KC_F10,    KC_F5,     KC_F6,       _______,     _______,      KC_F7,     KC_F1,     KC_F2,       KC_F3,         KC_F4,       _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-          _______,       KC_BACKSLASH, KC_DOUBLE_QUOTE,KC_MINUS,KC_HASH,   _______,     _______,      _______,  KC_AT,  KC_COLON, KC_LCBR,    KC_RCBR,    KC_GRAVE,       _______,
+          _______,       KC_DQUO,      KC_LABK,     KC_RABK,  KC_AT,     KC_COMMA,       _______,      _______,     _______,  KC_AMPR, KC_LCBR,    KC_RCBR,      KC_GRAVE,        _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-          _______,        KC_EQL,    KC_SEMICOLON,  KC_AMPR, KC_PIPE,    _______,    _______,         _______,  KC_QUESTION,KC_UNDERSCORE,KC_LPRN, KC_RPRN,   KC_COLON,   _______,
+          _______,       KC_EXLM,      KC_MINS,     KC_PLUS, KC_EQL,    KC_HASH,       _______,      _______,     KC_PIPE, KC_COLN,  KC_LPRN,    KC_RPRN,      KC_PERC,       _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |                           |         |        |          |             |             |             |
-         _______,        KC_PLUS,     KC_ASTERISK,  KC_PERC, KC_TILDE,_______,                                  KC_DLR, KC_EXCLAIM, KC_LBRC,   KC_RBRC,     KC_CIRC,    _______,
+         _______,        KC_GRAVE,      KC_SLSH,     KC_ASTR, KC_CIRC,   UPDIR,                                  KC_TILDE, KC_DOLLAR, KC_LBRC,   KC_RBRC,     KC_CIRC,    _______,
     //|______________|______________|______________|________|________|______________|                           |_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |                           |         |        |          |             |             |             |
           _______,       _______,       _______,    _______, _______,   _______,                                  _______,  _______,  _______,    _______,      _______,       _______,
@@ -173,16 +204,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
            _______,       _______,       _______,   _______, _______,    _______,      _______,       _______,    _______, _______,  _______,     _______,      _______,      _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-           _______,       _______,       _______,   _______, _______,    _______,      _______,       _______,    _______,  _______,    UE,        _______,     _______,      _______,
+           _______,       _______,       _______,   _______, _______,    _______,      _______,       _______,    _______,  _______,  _______,    _______,     _______,      _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |           | |             |         |        |          |             |             |             |
-           _______,        AE,           _______,     SS,    _______,    _______,      _______,       _______,    _______,  _______,  _______,     _______,       OE,         _______,
+           _______,        _______,     _______,   _______,  _______,    _______,      _______,       _______,    _______,  _______,  _______,     _______,     _______,      _______,
     //|______________|______________|______________|________|________|______________|___________| |_____________|_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |                           |         |        |          |             |             |             |
-           _______,       _______,       _______,   _______, _______,    _______,                                 _______, _______,  _______,     _______,     _______,      _______,
+           _______,       _______,       _______,   _______, _______,    _______,                                 _______, _______,    UE,          OE,           SS,        _______,
     //|______________|______________|______________|________|________|______________|                           |_________|________|__________|_____________|_____________|_____________|
     //|              |              |              |        |        |              |                           |         |        |          |             |             |             |
-           _______,       _______,       _______,   _______, _______,    _______,                                 _______, _______,  _______,  _______, _______,   _______,
+           _______,       _______,       _______,   _______, _______,    _______,                                 _______, _______,    UE,          OE,           SS,        _______,
     //|______________|______________|______________|________|________|______________|_________       ___________|_________|________|__________|_____________|_____________|_____________|
     //                                |                  |                |                   |     |           |                  |                |
                                             _______,          _______,     _______,         _______,        _______,          _______
@@ -232,13 +263,13 @@ bool get_tapping_force_hold(uint16_t keycode, keyrecord_t* record) {
     }
 }
 
-void matrix_scan_user(void) {
-    achordion_task();
-}
+// void matrix_scan_user(void) {
+//     achordion_task();
+// }
 
-uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
-    return 2000; // Otherwise use a timeout of 800 ms.
-}
+// uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
+//     return 2000; // Otherwise use a timeout of 800 ms.
+// }
 
 extern rgb_config_t rgb_matrix_config;
 
@@ -306,16 +337,20 @@ bool rgb_matrix_indicators_user(void) {
     return false;
 }
 
-bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record, uint16_t other_keycode, keyrecord_t* other_record) {
-    // Exceptionally consider the following chords as holds, even though they
-    // are on the same hand
-    switch (tap_hold_keycode) {
-        case HOME_SP:
-            return true;
-        case HOME_BSP:
-            return other_keycode != HOME_SP;
-    }
+// bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record, uint16_t other_keycode, keyrecord_t* other_record) {
+//     // Exceptionally consider the following chords as holds, even though they
+//     // are on the same hand
+//     switch (tap_hold_keycode) {
+//         case HOME_SP:
+//             return true;
+//         case OSM(MOD_LSFT):
+//             return true;
+//         case OSM(MOD_RSFT):
+//             return true;
+//         case HOME_BSP:
+//             return other_keycode != HOME_SP;
+//     }
 
-    // Otherwise, follow the opposite hands rule.
-    return achordion_opposite_hands(tap_hold_record, other_record);
-}
+//     // Otherwise, follow the opposite hands rule.
+//     return achordion_opposite_hands(tap_hold_record, other_record);
+// }
