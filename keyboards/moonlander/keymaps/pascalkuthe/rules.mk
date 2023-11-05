@@ -3,11 +3,11 @@
 CONSOLE_ENABLE = no
 COMMAND_ENABLE = no
 TAP_DANCE_ENABLE = no
-LEADER_ENABLE = yes
+LEADER_ENABLE = no
 AUDIO_ENABLE = yes
 KEY_OVERRIDE_ENABLE = yes
 SRC = matrix.c
-# SRC += features/achordion.c
+SRC += features/achordion.c
 UNICODE_ENABLE = no
 UNICODEMAP_ENABLE =no
 MOUSEKEY_ENABLE = yes
